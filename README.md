@@ -4,6 +4,8 @@ Quick demo for creating a blog application with Prismic to enhance and ease the 
 
 Needs more work on the mobile part 
 
+### [live-demo](https://bloggy-umber-nine.vercel.app/)
+
 &nbsp;
 ![Info section](https://github.com/DanielGit28/Bloggy/assets/68488204/54df88fb-1ae0-4943-91cb-a32a3bcece85)
 
@@ -35,4 +37,4 @@ npm run dev
 To edit the content of this project, go to [prismic.io/dashboard](https://prismic.io/dashboard), click on the repository for this website, and start editing.
 
 
-[live-demo]: https://nextjs-starter-prismic-minimal.vercel.app/
+
