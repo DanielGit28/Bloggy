@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import { SliceZone } from "@prismicio/react";
 import * as prismic from "@prismicio/client";
+import { supabase } from "@/lib/supabase/server";
 
 import { createClient } from "@/prismicio";
 import { components } from "@/slices";
@@ -12,6 +13,8 @@ import { PrismicNextImage } from "@prismicio/next";
 import { PostCard } from "@/components/PostCard";
 import { RichText } from "@/components/RichText";
 import { Navigation } from "@/components/Navigation";
+import { CommentsForm } from "@/components/CommentsForm";
+import { Comments } from "@/components/Comments";
 
 type Params = { uid: string };
 
@@ -28,6 +31,12 @@ export async function generateMetadata({
   const page = await client
     .getByUID("blog_post", params.uid)
     .catch(() => notFound());
+
+    const comments = await supabase
+    .from("comments")
+    .select("post_id, nickname, payload, created_at, id, published, email")
+    .eq("post_id", page.id)
+    .order("created_at", { ascending: true });
 
   return {
     title: prismic.asText(page.data.title),
@@ -50,6 +59,14 @@ export default async function Page({ params }: { params: Params }) {
   const page = await client
     .getByUID("blog_post", params.uid)
     .catch(() => notFound());
+
+    const comments = await supabase
+    .from("comments")
+    .select("post_id, nickname, payload, created_at, id, published, email")
+    .eq("post_id", page.id)
+    .eq("published", true) // only fetch published comments
+    .order("created_at", { ascending: true });
+    const commentsData = comments.data;
 
   /**
    * Fetch all of the blog posts in Prismic (max 2), excluding the current one, and ordered by publication date.
@@ -97,6 +114,8 @@ export default async function Page({ params }: { params: Params }) {
 
       {/* Display the content of the blog post */}
       <SliceZone slices={slices} components={components} />
+      <Comments comments={commentsData}/>
+      <CommentsForm id={page.id} uid={page.uid} />
 
       {/* Display the Recommended Posts section using the posts we requested earlier */}
       <h2 className="font-bold text-3xl">Recommended Posts</h2>
